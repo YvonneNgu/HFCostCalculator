@@ -40,6 +40,15 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+        .material-name {
+            width: 40%;
+        }
+        .quantity, .price {
+            width: 15%;
+        }
+        .unit {
+            width: 30%;
+        }
         button {
             background-color: #4CAF50;
             color: white;
@@ -65,10 +74,10 @@
         <h1>成本计算器 - 低配版</h1>
         <table id="materialTable">
             <tr>
-                <th>材料名</th>
-                <th>数量</th>
-                <th>单位</th>
-                <th>单价</th>
+                <th class="material-name">材料名</th>
+                <th class="quantity">数量</th>
+                <th class="unit">单位</th>
+                <th class="price">单价</th>
             </tr>
         </table>
         <button onclick="addMaterial()">+ 添加材料</button>
@@ -85,14 +94,20 @@
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
             var cell4 = row.insertCell(3);
-            cell1.innerHTML = `<input type="text" placeholder="材料名" value="${name}" oninput="saveMaterials()">`;
-            cell2.innerHTML = '<input type="number" placeholder="数量" value="0" oninput="saveMaterials()">';
-            cell3.innerHTML = `<select onchange="saveMaterials()">
+            cell1.innerHTML = `<input type="text" class="material-name" placeholder="材料名" value="${name}" oninput="saveMaterials()">`;
+            cell2.innerHTML = '<input type="number" class="quantity" placeholder="数量" value="0" min="0" step="any" oninput="validateQuantity(this); saveMaterials();">';
+            cell3.innerHTML = `<select class="unit" onchange="saveMaterials()">
                 <option value="片" ${unit === '片' ? 'selected' : ''}>片</option>
                 <option value="公斤" ${unit === '公斤' ? 'selected' : ''}>公斤</option>
                 <option value="克" ${unit === '克' ? 'selected' : ''}>克</option>
             </select>`;
-            cell4.innerHTML = `<input type="number" placeholder="单价" value="${price}" oninput="saveMaterials()">`;
+            cell4.innerHTML = `<input type="number" class="price" placeholder="单价" value="${price}" min="0" step="any" oninput="saveMaterials()">`;
+        }
+
+        function validateQuantity(input) {
+            if (input.value < 0) {
+                input.value = 0;
+            }
         }
 
         function resetTable() {
