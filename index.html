@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>成本计算器 - 低配版</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+        h1 {
+            font-size: 1.5em;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            font-size: 0.9em;
+        }
+        button {
+            margin: 10px 5px;
+            padding: 10px;
+            font-size: 1em;
+            width: calc(50% - 10px);
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        #cost {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        @media screen and (max-width: 600px) {
+            table, tr, td {
+                display: block;
+            }
+            thead {
+                display: none;
+            }
+            tr {
+                margin-bottom: 10px;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+            td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>成本计算器 - 低配版</h1>
+    <button id="editBtn">编辑材料</button>
+    <button id="confirmBtn" style="display:none;">确认</button>
+    <button id="cancelBtn" style="display:none;">取消</button>
+    <table id="materialsTable">
+        <thead>
+            <tr>
+                <th>材料名</th>
+                <th>数量</th>
+                <th>单位</th>
+                <th>单价</th>
+            </tr>
+        </thead>
+        <tbody id="materialsBody"></tbody>
+    </table>
+    <button id="addMaterialBtn" style="display:none;">+ 添加材料</button>
+    <button id="resetBtn">重置</button>
+    <button id="calculateBtn">开始计算</button>
+    <p>总成本: <span id="cost">0</span></p>
+
+    <script>
+        let materials = JSON.parse(localStorage.getItem('materials')) || [];
+        const materialsBody = document.getElementById('materialsBody');
+        const editBtn = document.getElementById('editBtn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const addMaterialBtn = document.getElementById('addMaterialBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const costSpan = document.getElementById('cost');
+
+        function renderMaterials() {
+            materialsBody.innerHTML = '';
+            materials.forEach((material, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td data-label="材料名">${material.name}</td>
+                    <td data-label="数量"><input type="number" min="0" step="0.01" value="${material.quantity}" onchange="updateQuantity(${index}, this.value)"></td>
+                    <td data-label="单位">${material.unit}</td>
+                    <td data-label="单价">${material.price}</td>
+                `;
+                materialsBody.appendChild(row);
+            });
+        }
+
+        function renderEditableMaterials() {
+            materialsBody.innerHTML = '';
+            materials.forEach((material, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td data-label="材料名"><input type="text" value="${material.name}" onchange="updateMaterial(${index}, 'name', this.value)"></td>
+                    <td data-label="数量">${material.quantity}</td>
+                    <td data-label="单位"><input type="text" value="${material.unit}" onchange="updateMaterial(${index}, 'unit', this.value)"></td>
+                    <td data-label="单价"><input type="number" min="0" step="0.01" value="${material.price}" onchange="updateMaterial(${index}, 'price', this.value)"></td>
+                    <td><button onclick="deleteMaterial(${index})">-</button></td>
+                `;
+                materialsBody.appendChild(row);
+            });
+        }
+
+        function updateQuantity(index, value) {
+            materials[index].quantity = parseFloat(value) || 0;
+            saveMaterials();
+        }
+
+        function updateMaterial(index, field, value) {
+            materials[index][field] = field === 'price' ? parseFloat(value) || 0 : value;
+            saveMaterials();
+        }
+
+        function deleteMaterial(index) {
+            materials.splice(index, 1);
+            renderEditableMaterials();
+            saveMaterials();
+        }
+
+        function addMaterial() {
+            materials.push({ name: '', quantity: 0, unit: '', price: 0 });
+            renderEditableMaterials();
+        }
+
+        function saveMaterials() {
+            localStorage.setItem('materials', JSON.stringify(materials));
+        }
+
+        function calculateCost() {
+            const totalCost = materials.reduce((sum, material) => {
+                return sum + material.quantity * material.price;
+            }, 0);
+            costSpan.textContent = totalCost.toFixed(2);
+        }
+
+        function resetQuantities() {
+            materials.forEach(material => material.quantity = 0);
+            renderMaterials();
+            saveMaterials();
+        }
+
+        editBtn.addEventListener('click', () => {
+            editBtn.style.display = 'none';
+            confirmBtn.style.display = 'inline-block';
+            cancelBtn.style.display = 'inline-block';
+            addMaterialBtn.style.display = 'inline-block';
+            renderEditableMaterials();
+        });
+
+        confirmBtn.addEventListener('click', () => {
+            editBtn.style.display = 'inline-block';
+            confirmBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+            addMaterialBtn.style.display = 'none';
+            renderMaterials();
+            saveMaterials();
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            editBtn.style.display = 'inline-block';
+            confirmBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+            addMaterialBtn.style.display = 'none';
+            materials = JSON.parse(localStorage.getItem('materials')) || [];
+            renderMaterials();
+        });
+
+        addMaterialBtn.addEventListener('click', addMaterial);
+
+        resetBtn.addEventListener('click', resetQuantities);
+
+        calculateBtn.addEventListener('click', calculateCost);
+
+        // Initial render
+        renderMaterials();
+
+    </script>
+</body>
+</html>
