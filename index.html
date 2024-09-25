@@ -74,6 +74,48 @@
                 font-weight: bold;
             }
         }
+
+        // 布局微调
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        header, main, footer {
+            border: 3px solid #333;
+            margin: 10px;
+            padding: 10px;
+        }
+        
+        header {
+            flex: 0 0 auto;
+        }
+        
+        main {
+            flex: 1 0 auto;
+            overflow-y: auto;
+        }
+        
+        footer {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #calculateBtn {
+            width: auto;
+        }
+        
     </style>
 </head>
 <body>
