@@ -31,7 +31,7 @@
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-        input[type="text"], input[type="number"] {
+        input[type="text"], input[type="number"], select {
             width: 100%;
             padding: 8px;
             margin: 4px 0;
@@ -87,7 +87,7 @@
             var cell4 = row.insertCell(3);
             cell1.innerHTML = '<input type="text" placeholder="材料名">';
             cell2.innerHTML = '<input type="number" placeholder="数量">';
-            cell3.innerHTML = '<input type="text" placeholder="单位">';
+            cell3.innerHTML = '<select><option value="片">片</option><option value="公斤">公斤</option><option value="克">克</option></select>';
             cell4.innerHTML = '<input type="number" placeholder="单价">';
         }
 
