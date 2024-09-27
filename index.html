@@ -44,16 +44,19 @@
             width: 40%;
         }
         .quantity {
-            width: 20%;
+            width: 17%;
         }
         .unit {
-            width: 20%;
+            width: 18%;
         }
         .price {
-            width: 20%;
+            width: 18%;
+        }
+        .deleteBtn {
+            width: 7%;
         }
         #unitDpBox{
-            width: 70px;
+            width: 65px;
         }
         input[type="number"] {
             text-align: right;
@@ -77,6 +80,22 @@
             font-weight: bold;
             margin-top: 15px;
         }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 10px;
+            margin: 2px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
     </style>
 </head>
 <body>
@@ -88,6 +107,7 @@
                 <th class="quantity">数量</th>
                 <th class="unit">单位</th>
                 <th class="price">单价</th>
+                <th class="deleteBtn"> </th>
             </tr>
         </table>
         <button onclick="addMaterial()">+ 添加材料</button>
@@ -97,21 +117,29 @@
     </div>
 
     <script>
-        function addMaterial(name = '', unit = '克', price = '') {
+        function addMaterial(name = '', quantity = '0', unit = '片', price = '') {
             var table = document.getElementById("materialTable");
             var row = table.insertRow(-1);
             var cell1 = row.insertCell(0);
             var cell2 = row.insertCell(1);
             var cell3 = row.insertCell(2);
             var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
             cell1.innerHTML = `<input type="text" class="material-name" placeholder="材料名" value="${name}" oninput="saveMaterials()">`;
-            cell2.innerHTML = '<input type="number" class="quantity" placeholder="数量" value="0" min="0" step="any" oninput="validateQuantity(this); saveMaterials();">';
-            cell3.innerHTML = `<select name="unitDpBox" id="unitDpBox" class="unit" onchange="saveMaterials()">
-                <option value="克" ${unit === '克' ? 'selected' : ''}>克</option>
-                <option value="公斤" ${unit === '公斤' ? 'selected' : ''}>公斤</option>
+            cell2.innerHTML = `<input type="number" class="quantity" placeholder="数量" value="${quantity}" min="0" step="any" oninput="validateQuantity(this); saveMaterials();">`;
+            cell3.innerHTML = `<select class="unit" onchange="saveMaterials()">
                 <option value="片" ${unit === '片' ? 'selected' : ''}>片</option>
+                <option value="公斤" ${unit === '公斤' ? 'selected' : ''}>公斤</option>
+                <option value="克" ${unit === '克' ? 'selected' : ''}>克</option>
             </select>`;
             cell4.innerHTML = `<input type="number" class="price" placeholder="单价" value="${price}" min="0" step="any" oninput="saveMaterials()">`;
+            cell5.innerHTML = '<button class="delete-btn" onclick="deleteMaterial(this)">删除</button>';
+        }
+
+        function deleteMaterial(btn) {
+            var row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            saveMaterials();
         }
 
         function validateQuantity(input) {
@@ -145,9 +173,10 @@
             var materials = [];
             for(var i = 1; i < table.rows.length; i++) {
                 var name = table.rows[i].cells[0].getElementsByTagName('input')[0].value;
+                var quantity = table.rows[i].cells[1].getElementsByTagName('input')[0].value;
                 var unit = table.rows[i].cells[2].getElementsByTagName('select')[0].value;
                 var price = table.rows[i].cells[3].getElementsByTagName('input')[0].value;
-                materials.push({name, unit, price});
+                materials.push({name, quantity, unit, price});
             }
             localStorage.setItem('materials', JSON.stringify(materials));
         }
@@ -157,7 +186,7 @@
             if (savedMaterials) {
                 var materials = JSON.parse(savedMaterials);
                 materials.forEach(material => {
-                    addMaterial(material.name, material.unit, material.price);
+                    addMaterial(material.name, material.quantity, material.unit, material.price);
                 });
             }
         }
