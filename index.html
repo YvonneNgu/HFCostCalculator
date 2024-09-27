@@ -97,7 +97,7 @@
     </div>
 
     <script>
-        function addMaterial(name = '', unit = '片', price = '') {
+        function addMaterial(name = '', unit = '克    ', price = '') {
             var table = document.getElementById("materialTable");
             var row = table.insertRow(-1);
             var cell1 = row.insertCell(0);
@@ -107,9 +107,9 @@
             cell1.innerHTML = `<input type="text" class="material-name" placeholder="材料名" value="${name}" oninput="saveMaterials()">`;
             cell2.innerHTML = '<input type="number" class="quantity" placeholder="数量" value="0" min="0" step="any" oninput="validateQuantity(this); saveMaterials();">';
             cell3.innerHTML = `<select name="unitDpBox" id="unitDpBox" class="unit" onchange="saveMaterials()">
-                <option value="片" ${unit === '片' ? 'selected' : ''}>片</option>
-                <option value="公斤" ${unit === '公斤' ? 'selected' : ''}>公斤</option>
-                <option value="克" ${unit === '克' ? 'selected' : ''}>克</option>
+                <option value="克" ${unit === '克    ' ? 'selected' : ''}>克</option>
+                <option value="公斤" ${unit === '公斤    ' ? 'selected' : ''}>公斤</option>
+                <option value="片" ${unit === '片    ' ? 'selected' : ''}>片</option>
             </select>`;
             cell4.innerHTML = `<input type="number" class="price" placeholder="单价" value="${price}" min="0" step="any" oninput="saveMaterials()">`;
         }
