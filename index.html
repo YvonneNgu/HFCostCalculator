@@ -47,16 +47,16 @@
             width: 17%;
         }
         .unit {
-            width: 18%;
+            width: 20%;
         }
         .price {
             width: 18%;
         }
         .deleteBtn {
-            width: 7%;
+            width: 5%;
         }
         #unitDpBox{
-            width: 65px;
+            width: 70px;
         }
         input[type="number"] {
             text-align: right;
@@ -84,7 +84,7 @@
             background-color: #f44336;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 3px 3px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
@@ -113,7 +113,7 @@
         <button onclick="addMaterial()">+ 添加材料</button>
         <button onclick="resetTable()">重置</button>
         <button onclick="calculate()">开始计算</button>
-        <div id="totalCost">总成本: 0</div>
+        <div id="totalCost">总成本: 0.00</div>
     </div>
 
     <script>
@@ -127,7 +127,7 @@
             var cell5 = row.insertCell(4);
             cell1.innerHTML = `<input type="text" class="material-name" placeholder="材料名" value="${name}" oninput="saveMaterials()">`;
             cell2.innerHTML = `<input type="number" class="quantity" placeholder="数量" value="${quantity}" min="0" step="any" oninput="validateQuantity(this); saveMaterials();">`;
-            cell3.innerHTML = `<select class="unit" onchange="saveMaterials()">
+            cell3.innerHTML = `<select name="unitDpBox" id="unitDpBox" class="unit" onchange="saveMaterials()">
                 <option value="片" ${unit === '片' ? 'selected' : ''}>片</option>
                 <option value="公斤" ${unit === '公斤' ? 'selected' : ''}>公斤</option>
                 <option value="克" ${unit === '克' ? 'selected' : ''}>克</option>
